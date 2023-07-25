@@ -1,0 +1,13 @@
+[package]
+name = "auid"
+version = "1.0.0"
+license = "ISC"
+edition = "2021"
+description = "Abineo Unique IDentifier, a timestamp-first unique identifier"
+
+[dependencies]
+bs58 = { version = "0.5" }
+chrono = "0.4"
+rand = "0.8"
+serde = { version = "1", features = ["derive"] }
+simd-adler32 = "0.3.7"
