@@ -1,6 +1,6 @@
 [package]
 name = "auid"
-version = "2.0.0"
+version = "2.0.1"
 license = "ISC"
 edition = "2021"
 description = "64 bit timestamp-first unique identifier"
@@ -9,3 +9,4 @@ description = "64 bit timestamp-first unique identifier"
 bs58 = "0.5"
 chrono = "0.4"
 rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }

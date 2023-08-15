@@ -4,10 +4,14 @@ use std::ops::Deref;
 use bs58::Alphabet;
 use chrono::Utc;
 use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 /// 64 bit timestamp-first unique identifier
 ///
 /// _(40 bit timestamp followed by 24 random bits)_
+#[derive(Debug, Clone, Default, PartialOrd, PartialEq, Hash, Serialize, Deserialize)]
+#[serde(transparent)]
+#[non_exhaustive]
 pub struct Uid(i64);
 
 impl Uid {
