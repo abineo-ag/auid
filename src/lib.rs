@@ -4,78 +4,50 @@ use std::ops::Deref;
 use bs58::Alphabet;
 use chrono::Utc;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
-use simd_adler32::adler32;
 
-/// 128 bit timestamp-first unique identifier
+/// 64 bit timestamp-first unique identifier
 ///
-/// _(32 bit unix timestamp followed by 96 random bits)_
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct Uid(pub String);
+/// _(40 bit timestamp followed by 24 random bits)_
+pub struct Uid(i64);
 
 impl Uid {
     pub fn new() -> Self {
-        let mut bytes = [0u8; 16];
+        let timestamp = Utc::now().timestamp() << 24;
 
-        // 32 bit unix timestamp
-        let unix_ts = Utc::now().timestamp().to_be_bytes();
-        bytes[0..4].copy_from_slice(&unix_ts[4..8]);
+        let mut random_bytes = [0u8; 8];
+        rand::thread_rng().fill(&mut random_bytes[5..8]);
+        let random_bytes = i64::from_be_bytes(random_bytes);
 
-        // 96 random bits
-        rand::thread_rng().fill(&mut bytes[4..16]);
-
-        Uid(bs58::encode(&bytes)
-            .with_alphabet(Alphabet::BITCOIN)
-            .into_string())
+        Uid(timestamp | random_bytes)
     }
 
-    pub fn to_string(self) -> String {
-        self.0
-    }
-
-    pub fn as_string(&self) -> &String {
-        &self.0
-    }
-
-    pub fn as_str(&self) -> &str {
-        self.0.as_str()
-    }
-
-    /// generates checksum using `Adler-32` hashing algorithm
-    pub fn checksum(&self) -> String {
-        format!("{:x?}", adler32(&self.0.as_str()))
-    }
-}
-
-impl<T: Into<String>> From<T> for Uid {
-    fn from(value: T) -> Self {
-        Uid(value.into())
-    }
-}
-
-impl Display for Uid {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.0)
+    pub fn to_hex(&self) -> String {
+        format!("{:x}", self.0)
     }
 }
 
 impl Deref for Uid {
-    type Target = String;
+    type Target = i64;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+impl Display for Uid {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            bs58::encode(self.0.to_be_bytes())
+                .with_alphabet(Alphabet::BITCOIN)
+                .into_string()
+        )
+    }
+}
 
-    #[test]
-    fn it_works() {
-        let id = Uid::new();
-        assert!(!id.0.is_empty());
-        assert!(!id.checksum().is_empty());
+impl From<i64> for Uid {
+    fn from(value: i64) -> Self {
+        Uid(value)
     }
 }
