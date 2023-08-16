@@ -1,16 +1,18 @@
 use std::fmt::{Display, Formatter};
 use std::ops::Deref;
 
-use bs58::Alphabet;
 use chrono::Utc;
 use rand::Rng;
-use serde::{Deserialize, Serialize};
 
 /// 64 bit timestamp-first unique identifier
 ///
 /// _(40 bit timestamp followed by 24 random bits)_
-#[derive(Debug, Clone, Copy, Default, PartialOrd, PartialEq, Hash, Serialize, Deserialize)]
-#[serde(transparent)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+#[cfg_attr(
+    feature = "serde",
+    derive(serde::Serialize, serde::Deserialize),
+    serde(transparent)
+)]
 pub struct Uid(pub i64);
 
 impl Uid {
@@ -24,6 +26,7 @@ impl Uid {
         Uid(timestamp | random_bytes)
     }
 
+    #[cfg(feature = "bs58")]
     pub fn to_hex(&self) -> String {
         format!("{:x}", self.0)
     }
@@ -38,6 +41,7 @@ impl Deref for Uid {
 }
 
 impl Display for Uid {
+    #[cfg(feature = "bs58")]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -46,6 +50,11 @@ impl Display for Uid {
                 .with_alphabet(Alphabet::BITCOIN)
                 .into_string()
         )
+    }
+
+    #[cfg(not(feature = "bs58"))]
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:x}", self.0)
     }
 }
 

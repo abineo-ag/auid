@@ -1,12 +1,15 @@
 [package]
 name = "auid"
-version = "2.0.1"
+version = "2.1.0"
 license = "ISC"
 edition = "2021"
 description = "64 bit timestamp-first unique identifier"
 
 [dependencies]
-bs58 = "0.5"
+bs58 = { version = "0.5", optional = true }
 chrono = "0.4"
 rand = "0.8"
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"], optional = true }
+
+[features]
+default = ["bs58", "serde"]
