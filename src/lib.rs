@@ -47,7 +47,7 @@ impl Display for Uid {
             f,
             "{}",
             bs58::encode(self.0.to_be_bytes())
-                .with_alphabet(Alphabet::BITCOIN)
+                .with_alphabet(bs58::Alphabet::BITCOIN)
                 .into_string()
         )
     }
