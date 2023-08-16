@@ -9,10 +9,9 @@ use serde::{Deserialize, Serialize};
 /// 64 bit timestamp-first unique identifier
 ///
 /// _(40 bit timestamp followed by 24 random bits)_
-#[derive(Debug, Clone, Default, PartialOrd, PartialEq, Hash, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, Default, PartialOrd, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(transparent)]
-#[non_exhaustive]
-pub struct Uid(i64);
+pub struct Uid(pub i64);
 
 impl Uid {
     pub fn new() -> Self {
