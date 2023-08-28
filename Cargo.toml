@@ -1,15 +1,29 @@
 [package]
 name = "auid"
-version = "2.1.0"
-license = "ISC"
+version = "3.0.0"
+license-file = "LICENSE"
 edition = "2021"
 description = "64 bit timestamp-first unique identifier"
 
 [dependencies]
-bs58 = { version = "0.5", optional = true }
+_bs58 = { package = "bs58", version = "0.5", optional = true }
 chrono = "0.4"
+_faster-hex = { package = "faster-hex", version = "0.8", optional = true, default-features = false, features = ["alloc", "std"] }
 rand = "0.8"
 serde = { version = "1.0", features = ["derive"], optional = true }
+thiserror = "1.0"
+_data-encoding = { package = "data-encoding", version = "2.4", optional = true }
 
 [features]
-default = ["bs58", "serde"]
+default = ["serde", "base16", "base32", "base58", "base64"]
+base16 = ["_faster-hex"]
+hex = ["base16"]
+base32 = ["_data-encoding"]
+base58 = ["_bs58"]
+base64 = ["_data-encoding"]
+
+[package.metadata.docs.rs]
+# To build locally:
+# RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --all-features --no-deps --open
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
