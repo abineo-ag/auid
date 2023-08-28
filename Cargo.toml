@@ -1,9 +1,11 @@
 [package]
 name = "auid"
-version = "3.0.0"
+version = "3.0.1"
 license-file = "LICENSE"
 edition = "2021"
 description = "64 bit timestamp-first unique identifier"
+documentation = "https://docs.rs/auid/latest/auid"
+repository = "https://github.com/abineo-ag/auid-rs"
 
 [dependencies]
 _bs58 = { package = "bs58", version = "0.5", optional = true }
